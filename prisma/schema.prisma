@@ -5,14 +5,11 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
-  // Generate into custom location because this repo has multiple prisma schemas
-  output   = "./client"
 }
 
 generator pothos {
   provider     = "prisma-pothos-types"
-  // Match client output location from above
-  clientOutput = "./client"
+  clientOutput = "@prisma/client"
   output       = "./generated.d.ts"
 }
 

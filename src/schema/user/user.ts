@@ -1,12 +1,14 @@
 import { builder } from "../../builder.js";
 
-builder.queryType({
+builder.prismaNode("User", {
+  id: { field: "id" },
   fields: (t) => ({
-    hello: t.string({
-      args: {
-        name: t.arg.string(),
-      },
-      resolve: (parent, { name }) => `hello, ${name || "World"}`,
+    firstName: t.exposeString("firstName"),
+    lastName: t.exposeString("lastName"),
+    fullName: t.string({
+      resolve: (user) => `${user.firstName} ${user.lastName}`,
     }),
+    posts: t.relation("posts"),
+    // comments: t.relatedConnection("comments", { cursor: "id" }),
   }),
 });
