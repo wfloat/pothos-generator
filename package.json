@@ -1,0 +1,20 @@
+{
+  "name": "pothos-generator",
+  "description": "Generator that emits a Pothos based GraphQL schema from your defined Prisma schema. Provides enhanced type-safety and error detection when the generated GraphQL schema's state diverges from your Prisma schema.",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc --watch",
+    "start": "tsc && node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/server": "^4.9.5",
+    "@mrleebo/prisma-ast": "^0.8.0",
+    "@pothos/core": "^3.38.0",
+    "graphql": "^16.8.1"
+  }
+}
