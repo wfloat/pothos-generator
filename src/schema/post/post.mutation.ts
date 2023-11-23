@@ -1,6 +1,6 @@
 import { builder } from "../../builder.js";
-import { Post } from "@prisma/client";
 import { PostObject } from "./post.js";
+import { Post } from "@prisma/client";
 
 type CreatePost = Omit<Post, "id">;
 type UpdatePost = Partial<Post>; // TODO: Make id required while keeping the other fields optional

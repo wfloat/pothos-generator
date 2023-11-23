@@ -1,6 +1,5 @@
 import { builder } from "../../builder.js";
 import { PostObject } from "./post.js";
-// import { db } from "../../database.js";
 
 builder.queryFields((t) => ({
   post: t.field({
@@ -11,39 +10,23 @@ builder.queryFields((t) => ({
       content: "contentValue",
     }),
   }),
+  // TODO: use import { resolveCursorConnection, ResolveCursorConnectionArgs } from '@pothos/plugin-relay';
+  posts: t.connection(
+    {
+      type: PostObject,
+      resolve: (parent, { first, last, before, after }) => {
+        return {
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: "abc",
+            endCursor: "def",
+          },
+          edges: [],
+        };
+      },
+    },
+    { name: "PostConnection" },
+    { name: "PostEdge" }
+  ),
 }));
-
-// builder.queryFields((t) => ({
-//   post: t.prismaField({
-//     type: "Post",
-//     nullable: true,
-//     args: {
-//       id: t.arg.id({ required: true }),
-//     },
-//     resolve: (query, root, args) =>
-//       db.post.findUnique({
-//         ...query,
-//         where: { id: Number.parseInt(String(args.id), 10) },
-//       }),
-//   }),
-//   posts: t.prismaConnection({
-//     type: "Post",
-//     cursor: "id",
-//     resolve: (query) =>
-//       db.post.findMany({
-//         ...query,
-//       }),
-//   }),
-//   // user: t.prismaField({
-//   //   type: "User",
-//   //   nullable: true,
-//   //   args: {
-//   //     id: t.arg.id({ required: true }),
-//   //   },
-//   //   resolve: (query, root, args) => undefined,
-//   //   // db.user.findUnique({
-//   //   //   ...query,
-//   //   //   where: { id: Number.parseInt(String(args.id), 10) },
-//   //   // }),
-//   // }),
-// }));
