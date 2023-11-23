@@ -1,6 +1,7 @@
 import { builder } from "../../builder.js";
 import { PostObject } from "./post.js";
 import { Post } from "@prisma/client";
+import { resolveCreatePost, resolveUpdatePost } from "./post.resolver.js";
 
 type CreatePost = Omit<Post, "id">;
 type UpdatePost = Partial<Post>; // TODO: Make id required while keeping the other fields optional
@@ -21,7 +22,7 @@ builder.mutationField("createPost", (t) =>
     args: {
       input: t.arg({ type: CreatePostInput, required: true }),
     },
-    resolve: (root, { input }) => undefined,
+    resolve: resolveCreatePost,
   })
 );
 
@@ -40,6 +41,6 @@ builder.mutationField("updatePost", (t) =>
     args: {
       input: t.arg({ type: UpdatePostInput, required: true }),
     },
-    resolve: (root, { input }) => undefined,
+    resolve: resolveUpdatePost,
   })
 );
