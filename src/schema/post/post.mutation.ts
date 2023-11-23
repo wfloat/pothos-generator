@@ -25,3 +25,30 @@ builder.mutationField("createPost", (t) =>
       }),
   })
 );
+
+const UpdatePostInput = builder.inputType("UpdatePostInput", {
+  fields: (t) => ({
+    // id: t.id({ required: true }),
+    title: t.string({ required: false }),
+    // blah: t.string(),
+  }),
+});
+
+builder.mutationField("UpdatePostInput", (t) =>
+  t.prismaField({
+    type: "Post",
+    nullable: true,
+    args: {
+      id: t.arg.id({ required: true }),
+      input: t.arg({ type: UpdatePostInput, required: true }),
+    },
+    resolve: (query, _, { id, input }) => undefined,
+    // db.post.update({
+    //   ...query,
+    //   where: { id: 1 },
+    //   data: {
+    //     ...input,
+    //   },
+    // }),
+  })
+);
