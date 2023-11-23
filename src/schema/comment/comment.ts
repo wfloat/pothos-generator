@@ -5,6 +5,6 @@ builder.prismaNode("Comment", {
   fields: (t) => ({
     comment: t.exposeString("comment"),
     author: t.relation("author"),
-    post: t.relation("post"),
+    // post: t.relation("post"),
   }),
 });

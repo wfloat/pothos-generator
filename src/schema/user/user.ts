@@ -8,7 +8,7 @@ builder.prismaNode("User", {
     fullName: t.string({
       resolve: (user) => `${user.firstName} ${user.lastName}`,
     }),
-    posts: t.relation("posts"),
+    // posts: t.relation("posts"),
     // comments: t.relatedConnection("comments", { cursor: "id" }),
   }),
 });

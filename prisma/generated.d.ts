@@ -11,13 +11,9 @@ export default interface PrismaTypes {
         Where: Prisma.UserWhereInput;
         Create: {};
         Update: {};
-        RelationName: "posts" | "comments";
-        ListRelations: "posts" | "comments";
+        RelationName: "comments";
+        ListRelations: "comments";
         Relations: {
-            posts: {
-                Shape: Post[];
-                Name: "Post";
-            };
             comments: {
                 Shape: Comment[];
                 Name: "Comment";
@@ -27,25 +23,16 @@ export default interface PrismaTypes {
     Post: {
         Name: "Post";
         Shape: Post;
-        Include: Prisma.PostInclude;
+        Include: never;
         Select: Prisma.PostSelect;
         OrderBy: Prisma.PostOrderByWithRelationInput;
         WhereUnique: Prisma.PostWhereUniqueInput;
         Where: Prisma.PostWhereInput;
         Create: {};
         Update: {};
-        RelationName: "author" | "comments";
-        ListRelations: "comments";
-        Relations: {
-            author: {
-                Shape: User;
-                Name: "User";
-            };
-            comments: {
-                Shape: Comment[];
-                Name: "Comment";
-            };
-        };
+        RelationName: never;
+        ListRelations: never;
+        Relations: {};
     };
     Comment: {
         Name: "Comment";
@@ -57,16 +44,12 @@ export default interface PrismaTypes {
         Where: Prisma.CommentWhereInput;
         Create: {};
         Update: {};
-        RelationName: "author" | "post";
+        RelationName: "author";
         ListRelations: never;
         Relations: {
             author: {
                 Shape: User;
                 Name: "User";
-            };
-            post: {
-                Shape: Post;
-                Name: "Post";
             };
         };
     };
