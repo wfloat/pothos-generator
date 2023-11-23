@@ -1,14 +1,32 @@
 import { builder } from "../../builder.js";
-
+import { Post } from "@prisma/client";
 import "./post.query.js";
 import "./post.mutation.js";
 
-builder.prismaNode("Post", {
-  id: { field: "id" },
+export const PostObject = builder.objectRef<Post>("Post");
+
+PostObject.implement({
   fields: (t) => ({
+    id: t.exposeID("id"),
     title: t.exposeString("title"),
     content: t.exposeString("content"),
-    // author: t.relation("author"),
-    // comments: t.relation("comments"),
+    // blah: t.exposeString("blah"),
+    // author: t.field({
+    //   type: UserObject,
+    //   resolve: (post) => db.user.findUniqueOrThrow({ where: { id: post.authorId } }),
+    // }),
   }),
 });
+
+// import "./post.query.js";
+// import "./post.mutation.js";
+
+// builder.prismaNode("Post", {
+//   id: { field: "id" },
+//   fields: (t) => ({
+//     title: t.exposeString("title"),
+//     content: t.exposeString("content"),
+//     // author: t.relation("author"),
+//     // comments: t.relation("comments"),
+//   }),
+// });

@@ -1,54 +1,45 @@
 import { builder } from "../../builder.js";
-import { db } from "../../database.js";
+import { Post } from "@prisma/client";
+import { PostObject } from "./post.js";
 
-const CreatePostInput = builder.inputType("CreatePostInput", {
+type CreatePost = Omit<Post, "id">;
+type UpdatePost = Partial<Post>; // TODO: Make id required while keeping the other fields optional
+export const CreatePostInput = builder.inputRef<CreatePost>("CreatePostInput");
+export const UpdatePostInput = builder.inputRef<UpdatePost>("UpdatePostInput");
+
+CreatePostInput.implement({
   fields: (t) => ({
     title: t.string({ required: true }),
     content: t.string({ required: true }),
-    authorId: t.int({ required: true }),
   }),
 });
 
 builder.mutationField("createPost", (t) =>
-  t.prismaField({
-    type: "Post",
+  t.field({
+    type: PostObject,
     nullable: true,
     args: {
       input: t.arg({ type: CreatePostInput, required: true }),
     },
-    resolve: (query, _, { input }) =>
-      db.post.create({
-        ...query,
-        data: {
-          ...input,
-        },
-      }),
+    resolve: (root, { input }) => undefined,
   })
 );
 
-const UpdatePostInput = builder.inputType("UpdatePostInput", {
+UpdatePostInput.implement({
   fields: (t) => ({
-    // id: t.id({ required: true }),
-    title: t.string({ required: false }),
-    // blah: t.string(),
+    id: t.int({ required: true }),
+    title: t.string(),
+    content: t.string(),
   }),
 });
 
-builder.mutationField("UpdatePostInput", (t) =>
-  t.prismaField({
-    type: "Post",
+builder.mutationField("updatePost", (t) =>
+  t.field({
+    type: PostObject,
     nullable: true,
     args: {
-      id: t.arg.id({ required: true }),
       input: t.arg({ type: UpdatePostInput, required: true }),
     },
-    resolve: (query, _, { id, input }) => undefined,
-    // db.post.update({
-    //   ...query,
-    //   where: { id: 1 },
-    //   data: {
-    //     ...input,
-    //   },
-    // }),
+    resolve: (root, { input }) => undefined,
   })
 );
