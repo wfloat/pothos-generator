@@ -2,9 +2,14 @@ import {
   resolveCursorConnection,
   ResolveCursorConnectionArgs,
 } from "@pothos/plugin-relay";
-import { PothosValidationError } from "@pothos/core";
+import {
+  CreatePostInput,
+  CreatePostInputShape,
+  UpdatePostInput,
+  UpdatePostInputShape,
+} from "./post.js";
 
-export function resolvePost(root, args, ctx) {
+export function post(id: number) {
   return {
     id: 0,
     title: "testing",
@@ -12,7 +17,7 @@ export function resolvePost(root, args, ctx) {
   };
 }
 
-export function resolvePosts(root, args, ctx) {
+export function posts(root, args, ctx) {
   return resolveCursorConnection(
     {
       args,
@@ -22,10 +27,10 @@ export function resolvePosts(root, args, ctx) {
   );
 }
 
-export function resolveCreatePost(root, args, ctx) {
+export function createPost(input: CreatePostInputShape) {
   return undefined;
 }
 
-export function resolveUpdatePost(root, args, ctx) {
+export function updatePost(input: UpdatePostInputShape) {
   return undefined;
 }
