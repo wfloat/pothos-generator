@@ -1,14 +1,13 @@
-// import { builder } from "../../builder.js";
+import { builder } from "../../builder.js";
+import "./user.query.js";
+import "./user.mutation.js";
 
-// builder.prismaNode("User", {
-//   id: { field: "id" },
-//   fields: (t) => ({
-//     firstName: t.exposeString("firstName"),
-//     lastName: t.exposeString("lastName"),
-//     fullName: t.string({
-//       resolve: (user) => `${user.firstName} ${user.lastName}`,
-//     }),
-//     // posts: t.relation("posts"),
-//     // comments: t.relatedConnection("comments", { cursor: "id" }),
-//   }),
-// });
+builder.prismaObject("User", {
+  fields: (t) => ({
+    id: t.exposeID("id"),
+    firstName: t.exposeString("firstName"),
+    lastName: t.exposeString("lastName"),
+    posts: t.relation("posts"),
+    comments: t.relation("comments"),
+  }),
+});
