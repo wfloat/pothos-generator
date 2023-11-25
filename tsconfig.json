@@ -1,12 +1,11 @@
 {
-    "compilerOptions": {
-      "module": "NodeNext",
-      "moduleResolution": "NodeNext",
-      "target": "ES2022",
-      "strict": true,
-      "sourceMap": true,
-      "rootDir": "src",
-      "outDir": "dist",
-    },
-    "include": ["src/**/*"],
-  }
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
+    "strict": true,
+    "sourceMap": true,
+    "outDir": "dist"
+  },
+  "include": ["src/**/*", "example/**/*"]
+}

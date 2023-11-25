@@ -5,11 +5,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
+    "start": "tsc && node dist/src/index.js",
     "build": "tsc --watch",
-    "start": "tsc && node dist/index.js",
-    "generate": "npx prisma generate --no-engine --watch",
-    "seed": "npx prisma migrate reset -f",
-    "type": "tsc --noEmit"
+    "serve": "tsc && node dist/example/server.js",
+    "generate": "npx prisma generate --no-engine --watch"
   },
   "keywords": [],
   "author": "",
