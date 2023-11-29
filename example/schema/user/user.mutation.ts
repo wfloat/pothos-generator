@@ -1,7 +1,6 @@
 import { builder } from "../../builder.js";
-// import { createUser, updateUser } from "./user.resolver.js";
-
 import { CreateUserInput, UpdateUserInput } from "./user.js";
+// import { createUser, updateUser } from "./user.resolver.js";
 
 builder.mutationField("createUser", (t) =>
   t.prismaField({

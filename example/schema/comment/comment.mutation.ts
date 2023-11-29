@@ -1,7 +1,6 @@
 import { builder } from "../../builder.js";
-// import { createComment, updateComment } from "./comment.resolver.js";
-
 import { CreateCommentInput, UpdateCommentInput } from "./comment.js";
+// import { createComment, updateComment } from "./comment.resolver.js";
 
 builder.mutationField("createComment", (t) =>
   t.prismaField({

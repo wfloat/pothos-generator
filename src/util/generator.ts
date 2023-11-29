@@ -111,9 +111,8 @@ function generateModelMutations(model: Model) {
   let nameKebab = _.kebabCase(model.name);
 
   return `import { builder } from "../../builder.js";
-// import { create${name}, update${name} } from "./${nameKebab}.resolver.js";
-
 import { Create${name}Input, Update${name}Input } from "./${nameKebab}.js";
+// import { create${name}, update${name} } from "./${nameKebab}.resolver.js";
 
 builder.mutationField("create${name}", (t) =>
 t.prismaField({
