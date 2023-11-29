@@ -10,24 +10,30 @@ generator client {
 generator pothos {
   provider     = "prisma-pothos-types"
   clientOutput = "@prisma/client"
-  // output       = "./generated.d.ts" // TODO: decide if I should version control this
+  output       = "./generated.d.ts" // TODO: decide if I should version control this
 }
 
+/// User
 model User {
-  id        Int       @id @default(autoincrement())
-  firstName String
-  lastName  String
-  posts     Post[]
-  comments  Comment[]
+  id            Int       @id @default(autoincrement())
+  firstName     String
+  lastName      String
+  modifiedPosts Post[]    @relation("1")
+  posts         Post[]    @relation("0")
+  comments      Comment[]
 }
 
+// post comment
 model Post {
-  id       Int       @id @default(autoincrement())
-  title    String
-  content  String
-  author   User      @relation(fields: [authorId], references: [id])
-  comments Comment[]
-  authorId Int
+  id           Int       @id @default(autoincrement())
+  // this should describe post
+  title        String
+  content      String
+  author       User      @relation(fields: [authorId], references: [id], name: "0")
+  comments     Comment[]
+  authorId     Int // authorId
+  modifiedBy   User?     @relation(fields: [modifiedById], references: [id], name: "1")
+  modifiedById Int?
 }
 
 model Comment {
@@ -35,6 +41,7 @@ model Comment {
   comment  String
   author   User   @relation(fields: [authorId], references: [id])
   post     Post   @relation(fields: [postId], references: [id])
+  /// auther Id comment
   authorId Int
-  postId   Int
+  postId   Int // post id
 }
