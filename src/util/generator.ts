@@ -75,6 +75,72 @@ export type Update${name}InputShape = typeof Update${name}Input.$inferInput;
 `;
 }
 
+function generateModelQueries(model: Model) {
+  let name = model.name;
+
+  return `import { builder } from "../../builder.js";
+
+builder.queryFields((t) => ({
+${name}: t.prismaField({
+    type: "${name}",
+    nullable: true,
+    args: {
+    id: t.arg.id({ required: true }),
+    },
+    resolve: (query, root, args, ctx) => undefined,
+    // db.${name}.findUnique({
+    //   ...query,
+    //   where: { id: Number.parseInt(String(args.id), 10) },
+    // }),
+}),
+${name}s: t.prismaConnection(
+    {
+    type: "${name}",
+    cursor: "id",
+    resolve: (query, parent, args, context, info) => undefined,
+    // prisma.${name}.findMany({ ...query }),
+    },
+    { name: "${name}Connection" },
+    { name: "${name}Edge" }
+),
+}));`;
+}
+
+function generateModelMutations(model: Model) {
+  let name = model.name;
+  let nameKebab = _.kebabCase(model.name);
+
+  return `import { builder } from "../../builder.js";
+// import { create${name}, update${name} } from "./${nameKebab}.resolver.js";
+
+import { Create${name}Input, Update${name}Input } from "./${nameKebab}.js";
+
+builder.mutationField("create${name}", (t) =>
+t.prismaField({
+    type: "${name}",
+    nullable: true,
+    args: {
+    input: t.arg({ type: Create${name}Input, required: true }),
+    },
+    resolve: (root, args, ctx) => undefined,
+    // create${name}(args.input),
+})
+);
+
+builder.mutationField("update${name}", (t) =>
+t.prismaField({
+    type: "${name}",
+    nullable: true,
+    args: {
+    input: t.arg({ type: Update${name}Input, required: true }),
+    },
+    resolve: (root, args, ctx) => undefined,
+    // update${name}(args.input),
+})
+);
+`;
+}
+
 function generateModelDefinition(model: Model, outputDir: string) {
   let modelKebab = _.kebabCase(model.name);
   let modelOutDir = `${outputDir}/${modelKebab}`;
@@ -83,11 +149,11 @@ function generateModelDefinition(model: Model, outputDir: string) {
   let typesContent = generateModelTypes(model);
   writeTsFile(modelOutDir, modelKebab, typesContent);
 
-  //   let queryContent = generateModelQueries(model);
-  //   writeTsFile(modelOutDir, modelNameKebab, typesContent);
+  let queryContent = generateModelQueries(model);
+  writeTsFile(modelOutDir, `${modelKebab}.query`, queryContent);
 
-  //   let mutationContent = generateModelMutations(model);
-  //   writeTsFile(modelOutDir, modelNameKebab, typesContent);
+  let mutationContent = generateModelMutations(model);
+  writeTsFile(modelOutDir, `${modelKebab}.mutation`, mutationContent);
 }
 
 export function generatePothosSchema(schema: Schema, outputDir: string) {
