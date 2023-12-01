@@ -1,6 +1,6 @@
 import { builder } from "../builder.js";
 
-import "./user/user.js";
+import "./account/account.js";
 import "./post/post.js";
 import "./comment/comment.js";
 

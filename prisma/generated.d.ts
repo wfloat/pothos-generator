@@ -1,14 +1,14 @@
 /* eslint-disable */
-import type { Prisma, User, Post, Comment } from "@prisma/client";
+import type { Prisma, Account, Post, Comment } from "@prisma/client";
 export default interface PrismaTypes {
-    User: {
-        Name: "User";
-        Shape: User;
-        Include: Prisma.UserInclude;
-        Select: Prisma.UserSelect;
-        OrderBy: Prisma.UserOrderByWithRelationInput;
-        WhereUnique: Prisma.UserWhereUniqueInput;
-        Where: Prisma.UserWhereInput;
+    Account: {
+        Name: "Account";
+        Shape: Account;
+        Include: Prisma.AccountInclude;
+        Select: Prisma.AccountSelect;
+        OrderBy: Prisma.AccountOrderByWithRelationInput;
+        WhereUnique: Prisma.AccountWhereUniqueInput;
+        Where: Prisma.AccountWhereInput;
         Create: {};
         Update: {};
         RelationName: "modifiedPosts" | "posts" | "comments";
@@ -42,16 +42,16 @@ export default interface PrismaTypes {
         ListRelations: "comments";
         Relations: {
             author: {
-                Shape: User;
-                Name: "User";
+                Shape: Account;
+                Name: "Account";
             };
             comments: {
                 Shape: Comment[];
                 Name: "Comment";
             };
             modifiedBy: {
-                Shape: User | null;
-                Name: "User";
+                Shape: Account | null;
+                Name: "Account";
             };
         };
     };
@@ -69,8 +69,8 @@ export default interface PrismaTypes {
         ListRelations: never;
         Relations: {
             author: {
-                Shape: User;
-                Name: "User";
+                Shape: Account;
+                Name: "Account";
             };
             post: {
                 Shape: Post;

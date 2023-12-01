@@ -8,6 +8,14 @@
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/dist/src/index.js",
       "outFiles": ["${workspaceFolder}/dist/**/*.js"]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Example server",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/dist/example/server.js",
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"]
     }
   ]
 }

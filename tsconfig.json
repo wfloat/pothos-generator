@@ -7,5 +7,6 @@
     "sourceMap": true,
     "outDir": "dist"
   },
-  "include": ["src/**/*", "example/**/*"]
+  "include": ["src/**/*", "example/**/*"],
+  "exclude": ["example/schema-example/**/*"]
 }

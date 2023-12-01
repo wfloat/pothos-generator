@@ -87,7 +87,7 @@ ${name}: t.prismaField({
     args: {
     id: t.arg.id({ required: true }),
     },
-    resolve: (query, root, args, ctx) => undefined,
+    resolve: (query, root, args, context, info) => undefined,
     // db.${name}.findUnique({
     //   ...query,
     //   where: { id: Number.parseInt(String(args.id), 10) },
@@ -121,7 +121,7 @@ t.prismaField({
     args: {
     input: t.arg({ type: Create${name}Input, required: true }),
     },
-    resolve: (root, args, ctx) => undefined,
+    resolve: (root, args, context, info) => undefined,
     // create${name}(args.input),
 })
 );
@@ -133,7 +133,7 @@ t.prismaField({
     args: {
     input: t.arg({ type: Update${name}Input, required: true }),
     },
-    resolve: (root, args, ctx) => undefined,
+    resolve: (root, args, context, info) => undefined,
     // update${name}(args.input),
 })
 );

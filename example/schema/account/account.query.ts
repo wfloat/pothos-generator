@@ -1,26 +1,26 @@
 import { builder } from "../../builder.js";
 
 builder.queryFields((t) => ({
-  User: t.prismaField({
-    type: "User",
+  Account: t.prismaField({
+    type: "Account",
     nullable: true,
     args: {
       id: t.arg.id({ required: true }),
     },
-    resolve: (query, root, args, ctx) => undefined,
-    // db.User.findUnique({
+    resolve: (query, root, args, context, info) => undefined,
+    // db.Account.findUnique({
     //   ...query,
     //   where: { id: Number.parseInt(String(args.id), 10) },
     // }),
   }),
-  Users: t.prismaConnection(
+  Accounts: t.prismaConnection(
     {
-      type: "User",
+      type: "Account",
       cursor: "id",
       resolve: (query, parent, args, context, info) => undefined,
-      // prisma.User.findMany({ ...query }),
+      // prisma.Account.findMany({ ...query }),
     },
-    { name: "UserConnection" },
-    { name: "UserEdge" }
+    { name: "AccountConnection" },
+    { name: "AccountEdge" }
   ),
 }));

@@ -7,7 +7,7 @@ builder.queryFields((t) => ({
     args: {
       id: t.arg.id({ required: true }),
     },
-    resolve: (query, root, args, ctx) => undefined,
+    resolve: (query, root, args, context, info) => undefined,
     // db.post.findUnique({
     //   ...query,
     //   where: { id: Number.parseInt(String(args.id), 10) },
@@ -17,7 +17,7 @@ builder.queryFields((t) => ({
     {
       type: "Post",
       cursor: "id",
-      resolve: (query, parent, args, context, info) => undefined,
+      resolve: async (query, parent, args, context, info) => undefined,
       // prisma.post.findMany({ ...query }),
     },
     { name: "PostConnection" },
