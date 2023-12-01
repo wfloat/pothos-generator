@@ -1,3 +1,17 @@
-import { PrismaClient } from "@prisma/client";
+import { DB } from "../prisma/generated/kysely.js";
+import { Pool } from "pg";
+import { Kysely, PostgresDialect } from "kysely";
 
-export const db = new PrismaClient();
+const dialect = new PostgresDialect({
+  pool: new Pool({
+    database: "test",
+    host: "localhost",
+    user: "admin",
+    port: 5434,
+    max: 10,
+  }),
+});
+
+export const db = new Kysely<DB>({
+  dialect,
+});

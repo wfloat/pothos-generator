@@ -10,11 +10,17 @@ generator client {
 generator pothos {
   provider     = "prisma-pothos-types"
   clientOutput = "@prisma/client"
-  output       = "./generated.d.ts" // TODO: decide if I should version control this
+  output       = "./generated/pothos.d.ts"
+}
+
+generator kysely {
+    provider = "prisma-kysely"
+    output = "./generated"
+    fileName = "kysely.d.ts"
 }
 
 model Account {
-  id            Int       @id @default(autoincrement())
+  id            Int       @id @default(dbgenerated("gen_random_uuid()"))
   firstName     String
   lastName      String
   modifiedPosts Post[]    @relation("1")
@@ -24,7 +30,7 @@ model Account {
 
 // post comment
 model Post {
-  id           Int       @id @default(autoincrement())
+  id           Int       @id @default(dbgenerated("gen_random_uuid()"))
   // this should describe post
   title        String
   content      String
@@ -36,11 +42,10 @@ model Post {
 }
 
 model Comment {
-  id       Int    @id @default(autoincrement())
+  id       Int    @id @default(dbgenerated("gen_random_uuid()"))
   comment  String
   author   Account   @relation(fields: [authorId], references: [id])
   post     Post   @relation(fields: [postId], references: [id])
-  /// auther Id comment
   authorId Int
   postId   Int // post id
 }
