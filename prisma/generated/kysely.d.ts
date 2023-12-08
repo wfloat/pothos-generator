@@ -5,22 +5,22 @@ export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
 export type Account = {
-    id: Generated<number>;
+    id: Generated<string>;
     firstName: string;
     lastName: string;
 };
 export type Comment = {
-    id: Generated<number>;
+    id: Generated<string>;
     comment: string;
-    authorId: number;
-    postId: number;
+    authorId: string;
+    postId: string;
 };
 export type Post = {
-    id: Generated<number>;
+    id: Generated<string>;
     title: string;
     content: string;
-    authorId: number;
-    modifiedById: number | null;
+    authorId: string;
+    modifiedById: string | null;
 };
 export type DB = {
     Account: Account;
