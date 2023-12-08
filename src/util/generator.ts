@@ -55,7 +55,7 @@ export const Create${name}Input =
     builder.inputRef<Create${name}InputType>("Create${name}Input");
 Create${name}Input.implement({
     fields: (t) => ({
-        id: t.int({ required: true }),
+        id: t.string({ required: true }),
 ${inputFields.map((field) => createFieldString(field)).join("\n")}
     }),
 });
@@ -67,7 +67,7 @@ export const Update${name}Input =
     builder.inputRef<Update${name}InputType>("Update${name}Input");
 Update${name}Input.implement({
     fields: (t) => ({
-    id: t.int({ required: true }),
+    id: t.string({ required: true }),
     ${inputFields.map((field) => updateFieldString(field)).join("\n")}
     }),
 });

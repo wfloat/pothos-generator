@@ -8,9 +8,24 @@ const prisma = new PrismaClient({});
 
 export const builder = new SchemaBuilder<{
   PrismaTypes: PrismaTypes;
+  Context: {
+    loaders: any; // TODO: Add to a context type
+  };
+  Scalars: {
+    ID: {
+      Output: string;
+      Input: string;
+    };
+  };
 }>({
   plugins: [PrismaPlugin, RelayPlugin],
-  relayOptions: {},
+  relayOptions: {
+    clientMutationId: "omit",
+    cursorType: "String",
+    // cursorFieldOptions: {
+    //   type: "String",
+    // },
+  },
   prisma: {
     client: prisma,
   },

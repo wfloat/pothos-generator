@@ -5,7 +5,7 @@ import "./account.mutation.js";
 
 builder.prismaObject("Account", {
   fields: (t) => ({
-    id: t.exposeID("id"),
+    id: t.exposeString("id"), // TODO: make this an int in the generator
     firstName: t.exposeString("firstName"),
     lastName: t.exposeString("lastName"),
   }),
@@ -16,7 +16,7 @@ export const CreateAccountInput =
   builder.inputRef<CreateAccountInputType>("CreateAccountInput");
 CreateAccountInput.implement({
   fields: (t) => ({
-    id: t.int({ required: true }),
+    id: t.string({ required: true }),
     firstName: t.string({ required: true }),
     lastName: t.string({ required: true }),
   }),
@@ -29,7 +29,7 @@ export const UpdateAccountInput =
   builder.inputRef<UpdateAccountInputType>("UpdateAccountInput");
 UpdateAccountInput.implement({
   fields: (t) => ({
-    id: t.int({ required: true }),
+    id: t.string({ required: true }),
     firstName: t.string(),
     lastName: t.string(),
   }),

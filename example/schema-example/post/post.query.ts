@@ -5,7 +5,7 @@ builder.queryFields((t) => ({
     type: "Post",
     nullable: true,
     args: {
-      id: t.arg.id({ required: true }),
+      id: t.arg.string({ required: true }),
     },
     resolve: (query, root, args, context, info) => undefined,
     // db.post.findUnique({

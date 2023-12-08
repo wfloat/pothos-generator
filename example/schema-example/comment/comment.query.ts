@@ -5,9 +5,10 @@ builder.queryFields((t) => ({
     type: "Comment",
     nullable: true,
     args: {
-      id: t.arg.id({ required: true }),
+      id: t.arg.string({ required: true }),
     },
-    resolve: (query, root, args, ctx) => undefined,
+    resolve: async (query, root, args, context, info) =>
+      await context.loaders.comment.load(args.id),
     // db.post.findUnique({
     //   ...query,
     //   where: { id: Number.parseInt(String(args.id), 10) },
@@ -17,7 +18,7 @@ builder.queryFields((t) => ({
     {
       type: "Comment",
       cursor: "id",
-      resolve: (query, parent, args, context, info) => undefined,
+      resolve: async (query, parent, args, context, info) => undefined,
       // prisma.post.findMany({ ...query }),
     },
     { name: "CommentConnection" },

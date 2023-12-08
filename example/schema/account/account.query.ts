@@ -5,9 +5,10 @@ builder.queryFields((t) => ({
     type: "Account",
     nullable: true,
     args: {
-      id: t.arg.id({ required: true }),
+      id: t.arg.string({ required: true }), // TODO: make this an int in the generator
     },
-    resolve: (query, root, args, context, info) => undefined,
+    resolve: async (query, root, args, context, info) =>
+      await context.loaders.account.load(args.id),
     // db.Account.findUnique({
     //   ...query,
     //   where: { id: Number.parseInt(String(args.id), 10) },
