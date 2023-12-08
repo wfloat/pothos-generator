@@ -1,13 +1,14 @@
 import { DB } from "../prisma/generated/kysely.js";
-import { Pool } from "pg";
+import pg from "pg";
 import { Kysely, PostgresDialect } from "kysely";
 
 const dialect = new PostgresDialect({
-  pool: new Pool({
-    database: "test",
+  pool: new pg.Pool({
+    database: "wfloat-local",
     host: "localhost",
-    user: "admin",
-    port: 5434,
+    user: "postgres",
+    password: "password",
+    port: 5432,
     max: 10,
   }),
 });

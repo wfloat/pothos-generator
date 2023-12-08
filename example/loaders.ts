@@ -1,28 +1,36 @@
 import DataLoader from "dataloader";
 import { db } from "./database.js";
+// import { Post, Account } from "@prisma/client";
+// import { Account } from "../prisma/generated/kysely.js";
 
+// TODO: Add to a context type
 export function createLoaders() {
   return {
-    // user: new DataLoader((ids) =>
-    //   db
-    //     .table("users")
-    //     .whereIn("id", ids)
-    //     .select()
-    //     .then((rows) => ids.map((id) => rows.find((x) => x.id === id)))
-    // ),
-    // story: new DataLoader((ids) =>
-    //   db
-    //     .table("stories")
-    //     .whereIn("id", ids)
-    //     .select()
-    //     .then((rows) => ids.map((id) => rows.find((x) => x.id === id)))
-    // ),
-    // storiesByUserId: new DataLoader((ids) =>
-    //   db.selectFrom("Account").selectAll().where
-    //     .table("stories")
-    //     .whereIn("author_id", ids)
-    //     .select()
-    //     .then((rows) => ids.map((id) => rows.filter((x) => x.author_id === id)))
-    // ),
+    // TODO: Add type to ids
+    // TODO: Make these use the same query functions instead of having their own
+    account: new DataLoader((ids: any) =>
+      db
+        .selectFrom("Account")
+        .selectAll()
+        .where("id", "in", ids)
+        .execute()
+        .then((rows) => ids.map((id: any) => rows.find((x) => x.id === id)))
+    ),
+    post: new DataLoader((ids: any) =>
+      db
+        .selectFrom("Post")
+        .selectAll()
+        .where("id", "in", ids)
+        .execute()
+        .then((rows) => ids.map((id: any) => rows.find((x) => x.id === id)))
+    ),
+    comment: new DataLoader((ids: any) =>
+      db
+        .selectFrom("Comment")
+        .selectAll()
+        .where("id", "in", ids)
+        .execute()
+        .then((rows) => ids.map((id: any) => rows.find((x) => x.id === id)))
+    ),
   };
 }
