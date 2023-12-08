@@ -14,38 +14,36 @@ generator pothos {
 }
 
 generator kysely {
-    provider = "prisma-kysely"
-    output = "./generated"
-    fileName = "kysely.d.ts"
+  provider = "prisma-kysely"
+  output   = "./generated"
+  fileName = "kysely.d.ts"
 }
 
 model Account {
-  id            Int       @id @default(dbgenerated("gen_random_uuid()"))
+  id            String    @id @default(dbgenerated("gen_random_uuid()"))
   firstName     String
   lastName      String
   modifiedPosts Post[]    @relation("1")
-  posts         Post[]    @relation("0") // show where Post.authorId === id
+  posts         Post[]    @relation("0")
   comments      Comment[]
 }
 
-// post comment
 model Post {
-  id           Int       @id @default(dbgenerated("gen_random_uuid()"))
-  // this should describe post
+  id           String    @id @default(dbgenerated("gen_random_uuid()"))
   title        String
   content      String
-  author       Account      @relation(fields: [authorId], references: [id], name: "0")
+  author       Account   @relation(fields: [authorId], references: [id], name: "0")
   comments     Comment[]
-  authorId     Int // authorId
-  modifiedBy   Account?     @relation(fields: [modifiedById], references: [id], name: "1")
-  modifiedById Int?
+  authorId     String
+  modifiedBy   Account?  @relation(fields: [modifiedById], references: [id], name: "1")
+  modifiedById String?
 }
 
 model Comment {
-  id       Int    @id @default(dbgenerated("gen_random_uuid()"))
+  id       String  @id @default(dbgenerated("gen_random_uuid()"))
   comment  String
-  author   Account   @relation(fields: [authorId], references: [id])
-  post     Post   @relation(fields: [postId], references: [id])
-  authorId Int
-  postId   Int // post id
+  author   Account @relation(fields: [authorId], references: [id])
+  post     Post    @relation(fields: [postId], references: [id])
+  authorId String
+  postId   String
 }
