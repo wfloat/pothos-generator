@@ -21,3 +21,4 @@ prisma migrate dev --name init
 
 ## TODO:
 - Add this package for field validation: https://www.npmjs.com/package/zod-prisma-types
+- Add totalCount to page Connections

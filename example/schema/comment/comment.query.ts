@@ -5,10 +5,10 @@ builder.queryFields((t) => ({
     type: "Comment",
     nullable: true,
     args: {
-      id: t.arg.string({ required: true }),
+      id: t.arg.id({ required: true }),
     },
-    resolve: (query, root, args, context, info) =>
-      context.loaders.comment.load(args.id),
+    resolve: async (query, root, args, context, info) =>
+      await context.loaders.comment.load(args.id),
     // db.Comment.findUnique({
     //   ...query,
     //   where: { id: Number.parseInt(String(args.id), 10) },

@@ -5,10 +5,14 @@ import "./comment.mutation.js";
 
 builder.prismaObject("Comment", {
   fields: (t) => ({
-    id: t.exposeString("id"),
+    id: t.exposeID("id"),
     comment: t.exposeString("comment"),
     authorId: t.exposeString("authorId"),
     postId: t.exposeString("postId"),
+    post: t.relation("post", {
+      resolve: async (query, root, args, context, info) =>
+        await context.loaders.post.load(root.postId),
+    }),
   }),
 });
 
