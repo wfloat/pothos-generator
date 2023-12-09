@@ -1,5 +1,11 @@
 import { writeTsFile } from "./io.js";
-import { Model, Schema, Field, prismaPothosTypeMappings } from "./types.js";
+import {
+  Model,
+  Schema,
+  Field,
+  prismaPothosTypeMappings,
+  Relation,
+} from "./types.js";
 import _ from "lodash";
 import * as fs from "fs";
 
@@ -24,20 +30,41 @@ function generateObjectField(field: Field) {
   return `${name}: t.${exposeType}("${name}"${nullableString}),`;
 }
 
+function createObjectRelation(relation: Relation) {
+  let name = relation.name;
+  let referenceField = relation.referenceField;
+  let relatedModel = relation.relatedModel;
+  let relatedModelCamel = _.camelCase(relatedModel);
+  return `${name}: t.relation("${name}", {
+  ${relation.required ? "" : "nullable: true,"}
+  resolve: async (query, root, args, context, info) =>
+  await context.loaders.${relatedModelCamel}.load(root.${referenceField}),
+}),`;
+}
+
 function createFieldString(field: Field) {
+  let fieldType = field.type;
+  if (fieldType === "ID") {
+    fieldType = "id";
+  }
   let requiredString = field.required ? "{ required: true }" : "";
-  return `${field.name}: t.${field.type}(${requiredString}),`;
+  return `${field.name}: t.${fieldType}(${requiredString}),`;
 }
 
 function updateFieldString(field: Field) {
-  return `${field.name}: t.${field.type}(),`;
+  let fieldType = field.type;
+  if (fieldType === "ID") {
+    fieldType = "id";
+  }
+  return `${field.name}: t.${fieldType}(),`;
 }
 
 function generateModelTypes(model: Model) {
   let name = model.name;
   let nameKebab = _.kebabCase(model.name);
   let fields = model.fields;
-  let inputFields = fields.filter((field) => field.type !== "ID");
+  let relations = model.relations;
+  let inputFields = fields.filter((field) => field.name !== "id");
 
   return `import { builder } from "../../builder.js";
 import { ${name} } from "@prisma/client";
@@ -46,7 +73,11 @@ import "./${nameKebab}.mutation.js";
 
 builder.prismaObject("${name}", {
     fields: (t) => ({
+    // Fields
 ${fields.map((field) => generateObjectField(field)).join("\n")}
+    // Relations
+${relations.map((field) => createObjectRelation(field)).join("\n")}
+    // TODO: Connections
     }),
 });
 
@@ -55,7 +86,6 @@ export const Create${name}Input =
     builder.inputRef<Create${name}InputType>("Create${name}Input");
 Create${name}Input.implement({
     fields: (t) => ({
-        id: t.string({ required: true }),
 ${inputFields.map((field) => createFieldString(field)).join("\n")}
     }),
 });
@@ -67,7 +97,7 @@ export const Update${name}Input =
     builder.inputRef<Update${name}InputType>("Update${name}Input");
 Update${name}Input.implement({
     fields: (t) => ({
-    id: t.string({ required: true }),
+    id: t.id({ required: true }),
     ${inputFields.map((field) => updateFieldString(field)).join("\n")}
     }),
 });
@@ -77,6 +107,7 @@ export type Update${name}InputShape = typeof Update${name}Input.$inferInput;
 
 function generateModelQueries(model: Model) {
   let name = model.name;
+  let nameCamel = _.camelCase(model.name);
 
   return `import { builder } from "../../builder.js";
 
@@ -87,18 +118,15 @@ ${name}: t.prismaField({
     args: {
     id: t.arg.id({ required: true }),
     },
-    resolve: (query, root, args, context, info) => undefined,
-    // db.${name}.findUnique({
-    //   ...query,
-    //   where: { id: Number.parseInt(String(args.id), 10) },
-    // }),
+    resolve: async (query, root, args, context, info) =>
+      await context.loaders.${nameCamel}.load(args.id),
+
 }),
 ${name}s: t.prismaConnection(
     {
     type: "${name}",
     cursor: "id",
     resolve: (query, parent, args, context, info) => undefined,
-    // prisma.${name}.findMany({ ...query }),
     },
     { name: "${name}Connection" },
     { name: "${name}Edge" }

@@ -5,11 +5,23 @@ import "./post.mutation.js";
 
 builder.prismaObject("Post", {
   fields: (t) => ({
-    id: t.exposeString("id"),
+    // Fields
+    id: t.exposeID("id"),
     title: t.exposeString("title"),
     content: t.exposeString("content"),
-    authorId: t.exposeString("authorId"),
-    modifiedById: t.exposeString("modifiedById", { nullable: true }),
+    authorId: t.exposeID("authorId"),
+    modifiedById: t.exposeID("modifiedById", { nullable: true }),
+    // Relations
+    author: t.relation("author", {
+      resolve: async (query, root, args, context, info) =>
+        await context.loaders.account.load(root.authorId),
+    }),
+    modifiedBy: t.relation("modifiedBy", {
+      nullable: true,
+      resolve: async (query, root, args, context, info) =>
+        await context.loaders.account.load(root.modifiedById),
+    }),
+    // TODO: Connections
   }),
 });
 
@@ -18,11 +30,10 @@ export const CreatePostInput =
   builder.inputRef<CreatePostInputType>("CreatePostInput");
 CreatePostInput.implement({
   fields: (t) => ({
-    id: t.string({ required: true }),
     title: t.string({ required: true }),
     content: t.string({ required: true }),
-    authorId: t.string({ required: true }),
-    modifiedById: t.string(),
+    authorId: t.id({ required: true }),
+    modifiedById: t.id(),
   }),
 });
 export type CreatePostInputShape = typeof CreatePostInput.$inferInput;
@@ -33,11 +44,11 @@ export const UpdatePostInput =
   builder.inputRef<UpdatePostInputType>("UpdatePostInput");
 UpdatePostInput.implement({
   fields: (t) => ({
-    id: t.string({ required: true }),
+    id: t.id({ required: true }),
     title: t.string(),
     content: t.string(),
-    authorId: t.string(),
-    modifiedById: t.string(),
+    authorId: t.id(),
+    modifiedById: t.id(),
   }),
 });
 export type UpdatePostInputShape = typeof UpdatePostInput.$inferInput;

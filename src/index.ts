@@ -16,8 +16,8 @@ function main() {
     DEFAULT_OUTPUT_DIR
   );
 
-  let schemaPath = validateSchemaPath(options.schema);
-  let outputDir = validateOutputDir(options.output);
+  const schemaPath = validateSchemaPath(options.schema);
+  const outputDir = validateOutputDir(options.output);
   console.log(`Prisma Schema File Path: ${schemaPath}`);
   console.log(`Output Directory: ${outputDir}`);
 

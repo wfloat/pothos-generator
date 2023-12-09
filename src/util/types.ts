@@ -8,12 +8,20 @@ export type Field = {
 export type Relation = {
   name: string;
   relatedModel: string;
+  referenceField: string;
+  required: boolean;
+};
+
+export type RelatedConnection = {
+  name: string;
+  relatedModel: string;
 };
 
 export type Model = {
   name: string;
   fields: Field[];
   relations: Relation[];
+  relatedConnections: RelatedConnection[];
 };
 
 export type Schema = {
