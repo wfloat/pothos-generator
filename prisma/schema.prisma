@@ -20,7 +20,7 @@ generator kysely {
 }
 
 model Account {
-  id            String    @id @default(dbgenerated("gen_random_uuid()"))
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   firstName     String
   lastName      String
   modifiedPosts Post[]    @relation("1")
@@ -29,21 +29,21 @@ model Account {
 }
 
 model Post {
-  id           String    @id @default(dbgenerated("gen_random_uuid()"))
+  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   title        String
   content      String
   author       Account   @relation(fields: [authorId], references: [id], name: "0")
   comments     Comment[]
-  authorId     String
+  authorId     String    @db.Uuid
   modifiedBy   Account?  @relation(fields: [modifiedById], references: [id], name: "1")
-  modifiedById String?
+  modifiedById String?   @db.Uuid
 }
 
 model Comment {
-  id       String  @id @default(dbgenerated("gen_random_uuid()"))
+  id       String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   comment  String
   author   Account @relation(fields: [authorId], references: [id])
   post     Post    @relation(fields: [postId], references: [id])
-  authorId String
-  postId   String
+  authorId String  @db.Uuid
+  postId   String  @db.Uuid
 }

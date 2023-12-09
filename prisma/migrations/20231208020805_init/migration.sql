@@ -1,6 +1,6 @@
 -- CreateTable
 CREATE TABLE "Account" (
-    "id" TEXT NOT NULL DEFAULT gen_random_uuid(),
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "firstName" TEXT NOT NULL,
     "lastName" TEXT NOT NULL,
 
@@ -9,21 +9,21 @@ CREATE TABLE "Account" (
 
 -- CreateTable
 CREATE TABLE "Post" (
-    "id" TEXT NOT NULL DEFAULT gen_random_uuid(),
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "title" TEXT NOT NULL,
     "content" TEXT NOT NULL,
-    "authorId" TEXT NOT NULL,
-    "modifiedById" TEXT,
+    "authorId" UUID NOT NULL,
+    "modifiedById" UUID,
 
     CONSTRAINT "Post_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Comment" (
-    "id" TEXT NOT NULL DEFAULT gen_random_uuid(),
+    "id" UUID NOT NULL DEFAULT gen_random_uuid(),
     "comment" TEXT NOT NULL,
-    "authorId" TEXT NOT NULL,
-    "postId" TEXT NOT NULL,
+    "authorId" UUID NOT NULL,
+    "postId" UUID NOT NULL,
 
     CONSTRAINT "Comment_pkey" PRIMARY KEY ("id")
 );
