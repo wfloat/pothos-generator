@@ -5,6 +5,7 @@ import {
   Field,
   prismaPothosTypeMappings,
   Relation,
+  RelatedConnection,
 } from "./types.js";
 import _ from "lodash";
 import * as fs from "fs";
@@ -42,6 +43,36 @@ function createObjectRelation(relation: Relation) {
 }),`;
 }
 
+const generateRandomString = (length: number) => {
+  let result = "";
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  const charactersLength = characters.length;
+  for (let i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+};
+
+function createObjectRelatedConnection(
+  connection: RelatedConnection,
+  modelName: string
+) {
+  let name = connection.name;
+  // let referenceField = relation.referenceField;
+  let relatedModel = connection.relatedModel;
+  let relatedModelCamel = _.camelCase(relatedModel);
+  let namePascal = _.upperFirst(name);
+  return `${name}: t.relatedConnection(
+  "${name}",
+  {
+    cursor: "id",
+    resolve: (query, parent, args, context, info) => undefined,
+  },
+  { name: "${generateRandomString(4)}${namePascal}Connection" },
+  { name: "${generateRandomString(4)}${namePascal}Edge" }
+),`;
+}
+
 function createFieldString(field: Field) {
   let fieldType = field.type;
   if (fieldType === "ID") {
@@ -64,6 +95,7 @@ function generateModelTypes(model: Model) {
   let nameKebab = _.kebabCase(model.name);
   let fields = model.fields;
   let relations = model.relations;
+  let relatedConnections = model.relatedConnections;
   let inputFields = fields.filter((field) => field.name !== "id");
 
   return `import { builder } from "../../builder.js";
@@ -76,8 +108,11 @@ builder.prismaObject("${name}", {
     // Fields
 ${fields.map((field) => generateObjectField(field)).join("\n")}
     // Relations
-${relations.map((field) => createObjectRelation(field)).join("\n")}
-    // TODO: Connections
+${relations.map((relation) => createObjectRelation(relation)).join("\n")}
+    // Connections
+${relatedConnections
+  .map((connection) => createObjectRelatedConnection(connection, name))
+  .join("\n")}
     }),
 });
 
@@ -128,8 +163,8 @@ ${name}s: t.prismaConnection(
     cursor: "id",
     resolve: (query, parent, args, context, info) => undefined,
     },
-    { name: "${name}Connection" },
-    { name: "${name}Edge" }
+    { name: "${name}sConnection" },
+    { name: "${name}sEdge" }
 ),
 }));`;
 }

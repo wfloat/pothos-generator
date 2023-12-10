@@ -19,7 +19,7 @@ builder.prismaObject("Comment", {
       resolve: async (query, root, args, context, info) =>
         await context.loaders.post.load(root.postId),
     }),
-    // TODO: Connections
+    // Connections
   }),
 });
 

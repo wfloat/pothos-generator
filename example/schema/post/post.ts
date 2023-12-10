@@ -21,7 +21,16 @@ builder.prismaObject("Post", {
       resolve: async (query, root, args, context, info) =>
         await context.loaders.account.load(root.modifiedById),
     }),
-    // TODO: Connections
+    // Connections
+    comments: t.relatedConnection(
+      "comments",
+      {
+        cursor: "id",
+        resolve: (query, parent, args, context, info) => undefined,
+      },
+      { name: "ZZbgCommentsConnection" },
+      { name: "okKMCommentsEdge" }
+    ),
   }),
 });
 

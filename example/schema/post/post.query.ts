@@ -16,7 +16,7 @@ builder.queryFields((t) => ({
       cursor: "id",
       resolve: (query, parent, args, context, info) => undefined,
     },
-    { name: "PostConnection" },
-    { name: "PostEdge" }
+    { name: "PostsConnection" },
+    { name: "PostsEdge" }
   ),
 }));

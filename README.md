@@ -23,3 +23,4 @@ prisma migrate dev --name init
 - Add this package for field validation: https://www.npmjs.com/package/zod-prisma-types
 - Add totalCount to page Connections
 - Figure out if resolvers should be async or not
+- Add a relatedField to RelatedConnection types

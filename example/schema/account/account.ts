@@ -11,7 +11,34 @@ builder.prismaObject("Account", {
     lastName: t.exposeString("lastName"),
     // Relations
 
-    // TODO: Connections
+    // Connections
+    modifiedPosts: t.relatedConnection(
+      "modifiedPosts",
+      {
+        cursor: "id",
+        resolve: (query, parent, args, context, info) => undefined,
+      },
+      { name: "IKeQModifiedPostsConnection" },
+      { name: "EloVModifiedPostsEdge" }
+    ),
+    posts: t.relatedConnection(
+      "posts",
+      {
+        cursor: "id",
+        resolve: (query, parent, args, context, info) => undefined,
+      },
+      { name: "rVWcPostsConnection" },
+      { name: "CVXaPostsEdge" }
+    ),
+    comments: t.relatedConnection(
+      "comments",
+      {
+        cursor: "id",
+        resolve: (query, parent, args, context, info) => undefined,
+      },
+      { name: "mjgeCommentsConnection" },
+      { name: "ECayCommentsEdge" }
+    ),
   }),
 });
 

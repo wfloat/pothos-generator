@@ -16,7 +16,7 @@ builder.queryFields((t) => ({
       cursor: "id",
       resolve: (query, parent, args, context, info) => undefined,
     },
-    { name: "AccountConnection" },
-    { name: "AccountEdge" }
+    { name: "AccountsConnection" },
+    { name: "AccountsEdge" }
   ),
 }));
