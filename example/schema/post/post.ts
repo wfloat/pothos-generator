@@ -1,5 +1,4 @@
 import { builder } from "../../builder.js";
-import { Post } from "@prisma/client";
 import "./post.query.js";
 import "./post.mutation.js";
 
@@ -10,16 +9,16 @@ builder.prismaObject("Post", {
     title: t.exposeString("title"),
     content: t.exposeString("content"),
     authorId: t.exposeID("authorId"),
-    modifiedById: t.exposeID("modifiedById", { nullable: true }),
+    editorId: t.exposeID("editorId", { nullable: true }),
     // Relations
     author: t.relation("author", {
       resolve: async (query, root, args, context, info) =>
         await context.loaders.account.load(root.authorId),
     }),
-    modifiedBy: t.relation("modifiedBy", {
+    editor: t.relation("editor", {
       nullable: true,
       resolve: async (query, root, args, context, info) =>
-        await context.loaders.account.load(root.modifiedById),
+        await context.loaders.account.load(root.editorId),
     }),
     // Connections
     comments: t.relatedConnection(
@@ -28,36 +27,8 @@ builder.prismaObject("Post", {
         cursor: "id",
         resolve: (query, parent, args, context, info) => undefined,
       },
-      { name: "ZZbgCommentsConnection" },
-      { name: "okKMCommentsEdge" }
+      { name: "PostCommentsConnection" },
+      { name: "PostCommentsEdge" }
     ),
   }),
 });
-
-type CreatePostInputType = Omit<Post, "id">;
-export const CreatePostInput =
-  builder.inputRef<CreatePostInputType>("CreatePostInput");
-CreatePostInput.implement({
-  fields: (t) => ({
-    title: t.string({ required: true }),
-    content: t.string({ required: true }),
-    authorId: t.id({ required: true }),
-    modifiedById: t.id(),
-  }),
-});
-export type CreatePostInputShape = typeof CreatePostInput.$inferInput;
-
-type UpdatePostInputType = Required<Pick<Post, "id">> &
-  Partial<Omit<Post, "id">>; // TODO: Make this cleaner
-export const UpdatePostInput =
-  builder.inputRef<UpdatePostInputType>("UpdatePostInput");
-UpdatePostInput.implement({
-  fields: (t) => ({
-    id: t.id({ required: true }),
-    title: t.string(),
-    content: t.string(),
-    authorId: t.id(),
-    modifiedById: t.id(),
-  }),
-});
-export type UpdatePostInputShape = typeof UpdatePostInput.$inferInput;

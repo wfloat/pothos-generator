@@ -1,19 +1,18 @@
 import { builder } from "../../builder.js";
 import { db } from "../../database.js";
-import { Account } from "@prisma/client";
 import { removeNullFieldsThatAreNonNullable } from "../../helpers.js";
-// import { CreateAccountInput, UpdateAccountInput, UpdateAccountInputShape } from "./account.js";
+import { Account } from "@prisma/client";
 
 type CreateAccountInputType = Omit<Account, "id">;
-export const CreateAccountInput =
+const CreateAccountInput =
   builder.inputRef<CreateAccountInputType>("CreateAccountInput");
 CreateAccountInput.implement({
   fields: (t) => ({
     firstName: t.string({ required: true }),
-    lastName: t.string({ required: true }),
+    lastName: t.string(),
   }),
 });
-export type CreateAccountInputShape = typeof CreateAccountInput.$inferInput;
+type CreateAccountInputShape = typeof CreateAccountInput.$inferInput;
 
 builder.mutationField("createAccount", (t) =>
   t.prismaField({
@@ -35,7 +34,7 @@ builder.mutationField("createAccount", (t) =>
 
 type UpdateAccountInputType = Required<Pick<Account, "id">> &
   Partial<Omit<Account, "id">>; // TODO: Make this cleaner
-export const UpdateAccountInput =
+const UpdateAccountInput =
   builder.inputRef<UpdateAccountInputType>("UpdateAccountInput");
 UpdateAccountInput.implement({
   fields: (t) => ({
@@ -44,9 +43,10 @@ UpdateAccountInput.implement({
     lastName: t.string(),
   }),
 });
-export type UpdateAccountInputShape = typeof UpdateAccountInput.$inferInput;
+type UpdateAccountInputShape = typeof UpdateAccountInput.$inferInput;
 
-const AccountNullability: { [K in keyof Account]?: boolean } = {
+const AccountNullability: { [K in keyof Account]: boolean } = {
+  id: false,
   firstName: false,
   lastName: true,
 };
@@ -60,15 +60,16 @@ builder.mutationField("updateAccount", (t) =>
     },
     resolve: async (query, parent, args, context, info) => {
       const input = removeNullFieldsThatAreNonNullable<Account>(
-        args.input,
+        { ...args.input },
         AccountNullability
       );
+      input.id = undefined;
 
       const result = await db
         .updateTable("Account")
         .set(input)
         .where("id", "=", args.input.id)
-        .executeTakeFirst();
+        .executeTakeFirstOrThrow();
       return context.loaders.account.load(args.input.id);
     },
   })

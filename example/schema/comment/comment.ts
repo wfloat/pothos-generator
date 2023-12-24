@@ -1,5 +1,4 @@
 import { builder } from "../../builder.js";
-import { Comment } from "@prisma/client";
 import "./comment.query.js";
 import "./comment.mutation.js";
 
@@ -19,32 +18,11 @@ builder.prismaObject("Comment", {
       resolve: async (query, root, args, context, info) =>
         await context.loaders.post.load(root.postId),
     }),
+    quality: t.relation("quality", {
+      nullable: true,
+      resolve: async (query, root, args, context, info) =>
+        await context.loaders.qualityFromComment.load(root.id),
+    }),
     // Connections
   }),
 });
-
-type CreateCommentInputType = Omit<Comment, "id">;
-export const CreateCommentInput =
-  builder.inputRef<CreateCommentInputType>("CreateCommentInput");
-CreateCommentInput.implement({
-  fields: (t) => ({
-    comment: t.string({ required: true }),
-    authorId: t.id({ required: true }),
-    postId: t.id({ required: true }),
-  }),
-});
-export type CreateCommentInputShape = typeof CreateCommentInput.$inferInput;
-
-type UpdateCommentInputType = Required<Pick<Comment, "id">> &
-  Partial<Omit<Comment, "id">>; // TODO: Make this cleaner
-export const UpdateCommentInput =
-  builder.inputRef<UpdateCommentInputType>("UpdateCommentInput");
-UpdateCommentInput.implement({
-  fields: (t) => ({
-    id: t.id({ required: true }),
-    comment: t.string(),
-    authorId: t.id(),
-    postId: t.id(),
-  }),
-});
-export type UpdateCommentInputShape = typeof UpdateCommentInput.$inferInput;

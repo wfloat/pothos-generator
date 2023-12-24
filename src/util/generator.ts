@@ -104,10 +104,8 @@ function generateModelTypes(model: Model) {
   let fields = model.fields;
   let relations = model.relations;
   let relatedConnections = model.relatedConnections;
-  let inputFields = fields.filter((field) => field.name !== "id");
 
   return `import { builder } from "../../builder.js";
-import { ${name} } from "@prisma/client";
 import "./${nameKebab}.query.js";
 import "./${nameKebab}.mutation.js";
 
@@ -123,28 +121,6 @@ ${relatedConnections
   .join("\n")}
     }),
 });
-
-type Create${name}InputType = Omit<${name}, "id">;
-export const Create${name}Input =
-    builder.inputRef<Create${name}InputType>("Create${name}Input");
-Create${name}Input.implement({
-    fields: (t) => ({
-${inputFields.map((field) => createFieldString(field)).join("\n")}
-    }),
-});
-export type Create${name}InputShape = typeof Create${name}Input.$inferInput;
-
-type Update${name}InputType = Required<Pick<${name}, "id">> &
-    Partial<Omit<${name}, "id">>; // TODO: Make this cleaner
-export const Update${name}Input =
-    builder.inputRef<Update${name}InputType>("Update${name}Input");
-Update${name}Input.implement({
-    fields: (t) => ({
-    id: t.id({ required: true }),
-    ${inputFields.map((field) => updateFieldString(field)).join("\n")}
-    }),
-});
-export type Update${name}InputShape = typeof Update${name}Input.$inferInput;
 `;
 }
 
@@ -181,11 +157,23 @@ function generateModelMutations(model: Model) {
   let name = model.name;
   let nameKebab = _.kebabCase(model.name);
   let nameCamel = _.camelCase(model.name);
+  let fields = model.fields;
+  let inputFields = fields.filter((field) => field.name !== "id");
 
   return `import { builder } from "../../builder.js";
 import { db } from "../../database.js";
-import { removeNullFields } from "../../helpers.js";
-import { Create${name}Input, Update${name}Input } from "./${nameKebab}.js";
+import { removeNullFieldsThatAreNonNullable } from "../../helpers.js";
+import { ${name} } from "@prisma/client";
+
+type Create${name}InputType = Omit<${name}, "id">;
+const Create${name}Input =
+    builder.inputRef<Create${name}InputType>("Create${name}Input");
+Create${name}Input.implement({
+    fields: (t) => ({
+${inputFields.map((field) => createFieldString(field)).join("\n")}
+    }),
+});
+type Create${name}InputShape = typeof Create${name}Input.$inferInput;
 
 builder.mutationField("create${name}", (t) =>
 t.prismaField({
@@ -205,6 +193,22 @@ t.prismaField({
 })
 );
 
+type Update${name}InputType = Required<Pick<${name}, "id">> &
+    Partial<Omit<${name}, "id">>; // TODO: Make this cleaner
+const Update${name}Input =
+    builder.inputRef<Update${name}InputType>("Update${name}Input");
+Update${name}Input.implement({
+    fields: (t) => ({
+    id: t.id({ required: true }),
+    ${inputFields.map((field) => updateFieldString(field)).join("\n")}
+    }),
+});
+type Update${name}InputShape = typeof Update${name}Input.$inferInput;
+
+const ${name}Nullability: { [K in keyof ${name}]: boolean } = {
+  ${fields.map((field) => `${field.name}: ${!field.required}`).join(",\n")}
+};
+
 builder.mutationField("update${name}", (t) =>
 t.prismaField({
     type: "${name}",
@@ -213,12 +217,17 @@ t.prismaField({
     input: t.arg({ type: Update${name}Input, required: true }),
     },
     resolve: async (query, parent, args, context, info) => {
-      const input = removeNullFields(args.input);
+      const input = removeNullFieldsThatAreNonNullable<${name}>(
+        { ...args.input },
+        ${name}Nullability
+      );
+      input.id = undefined;
+
       const result = await db
         .updateTable("${name}")
         .set(input)
         .where("id", "=", args.input.id)
-        .executeTakeFirst();
+        .executeTakeFirstOrThrow();
       return context.loaders.${nameCamel}.load(args.input.id);
     },
 })
