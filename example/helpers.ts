@@ -3,7 +3,7 @@ type UndefinedPartial<T> = {
 };
 
 export function removeNullFieldsThatAreNonNullable<T extends object>(
-  input: Record<string, T[keyof T]>,
+  input: Record<string, any>,
   nullability: { [K in keyof T]?: boolean | undefined }
 ): UndefinedPartial<T> {
   const keysToRemove: (keyof T)[] = [];
