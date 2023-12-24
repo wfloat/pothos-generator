@@ -4,8 +4,7 @@ import { removeNullFieldsThatAreNonNullable } from "../../helpers.js";
 import { Comment } from "@prisma/client";
 
 type CreateCommentInputType = Omit<Comment, "id">;
-const CreateCommentInput =
-  builder.inputRef<CreateCommentInputType>("CreateCommentInput");
+const CreateCommentInput = builder.inputRef<CreateCommentInputType>("CreateCommentInput");
 CreateCommentInput.implement({
   fields: (t) => ({
     comment: t.string({ required: true }),
@@ -33,10 +32,8 @@ builder.mutationField("createComment", (t) =>
   })
 );
 
-type UpdateCommentInputType = Required<Pick<Comment, "id">> &
-  Partial<Omit<Comment, "id">>; // TODO: Make this cleaner
-const UpdateCommentInput =
-  builder.inputRef<UpdateCommentInputType>("UpdateCommentInput");
+type UpdateCommentInputType = Required<Pick<Comment, "id">> & Partial<Omit<Comment, "id">>; // TODO: Make this cleaner
+const UpdateCommentInput = builder.inputRef<UpdateCommentInputType>("UpdateCommentInput");
 UpdateCommentInput.implement({
   fields: (t) => ({
     id: t.id({ required: true }),

@@ -18,7 +18,7 @@ builder.prismaObject("Post", {
     editor: t.relation("editor", {
       nullable: true,
       resolve: async (query, root, args, context, info) =>
-        await context.loaders.account.load(root.editorId),
+        root.editorId ? await context.loaders.account.load(root.editorId) : null,
     }),
     // Connections
     comments: t.relatedConnection(

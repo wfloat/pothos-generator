@@ -39,15 +39,19 @@ function createObjectRelation(relation: Relation, model: Model) {
 
   let loaderCode;
   if (relation.oneToOne) {
-    loaderCode = `context.loaders.${name}From${model.name}.load(root.id)`;
+    loaderCode = `await context.loaders.${name}From${model.name}.load(root.id)`;
   } else {
-    loaderCode = `context.loaders.${relatedModelCamel}.load(root.${referenceField})`;
+    loaderCode = `await context.loaders.${relatedModelCamel}.load(root.${referenceField})`;
+  }
+
+  if (!relation.required && !relation.oneToOne) {
+    loaderCode = `root.${relation.referenceField} ? ${loaderCode}: null`;
   }
 
   return `${name}: t.relation("${name}", {
   ${relation.required ? "" : "nullable: true,"}
   resolve: async (query, root, args, context, info) =>
-  await ${loaderCode},
+  ${loaderCode},
 }),`;
 }
 
@@ -61,10 +65,7 @@ const generateRandomString = (length: number) => {
   return result;
 };
 
-function createObjectRelatedConnection(
-  connection: RelatedConnection,
-  modelName: string
-) {
+function createObjectRelatedConnection(connection: RelatedConnection, modelName: string) {
   let name = connection.name;
   // let referenceField = relation.referenceField;
   let relatedModel = connection.relatedModel;

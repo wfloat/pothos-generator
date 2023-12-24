@@ -4,8 +4,7 @@ import { removeNullFieldsThatAreNonNullable } from "../../helpers.js";
 import { Quality } from "@prisma/client";
 
 type CreateQualityInputType = Omit<Quality, "id">;
-const CreateQualityInput =
-  builder.inputRef<CreateQualityInputType>("CreateQualityInput");
+const CreateQualityInput = builder.inputRef<CreateQualityInputType>("CreateQualityInput");
 CreateQualityInput.implement({
   fields: (t) => ({
     score: t.int({ required: true }),
@@ -32,10 +31,8 @@ builder.mutationField("createQuality", (t) =>
   })
 );
 
-type UpdateQualityInputType = Required<Pick<Quality, "id">> &
-  Partial<Omit<Quality, "id">>; // TODO: Make this cleaner
-const UpdateQualityInput =
-  builder.inputRef<UpdateQualityInputType>("UpdateQualityInput");
+type UpdateQualityInputType = Required<Pick<Quality, "id">> & Partial<Omit<Quality, "id">>; // TODO: Make this cleaner
+const UpdateQualityInput = builder.inputRef<UpdateQualityInputType>("UpdateQualityInput");
 UpdateQualityInput.implement({
   fields: (t) => ({
     id: t.id({ required: true }),

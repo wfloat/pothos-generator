@@ -4,8 +4,7 @@ import { removeNullFieldsThatAreNonNullable } from "../../helpers.js";
 import { Account } from "@prisma/client";
 
 type CreateAccountInputType = Omit<Account, "id">;
-const CreateAccountInput =
-  builder.inputRef<CreateAccountInputType>("CreateAccountInput");
+const CreateAccountInput = builder.inputRef<CreateAccountInputType>("CreateAccountInput");
 CreateAccountInput.implement({
   fields: (t) => ({
     firstName: t.string({ required: true }),
@@ -32,10 +31,8 @@ builder.mutationField("createAccount", (t) =>
   })
 );
 
-type UpdateAccountInputType = Required<Pick<Account, "id">> &
-  Partial<Omit<Account, "id">>; // TODO: Make this cleaner
-const UpdateAccountInput =
-  builder.inputRef<UpdateAccountInputType>("UpdateAccountInput");
+type UpdateAccountInputType = Required<Pick<Account, "id">> & Partial<Omit<Account, "id">>; // TODO: Make this cleaner
+const UpdateAccountInput = builder.inputRef<UpdateAccountInputType>("UpdateAccountInput");
 UpdateAccountInput.implement({
   fields: (t) => ({
     id: t.id({ required: true }),

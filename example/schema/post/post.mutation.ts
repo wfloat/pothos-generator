@@ -4,8 +4,7 @@ import { removeNullFieldsThatAreNonNullable } from "../../helpers.js";
 import { Post } from "@prisma/client";
 
 type CreatePostInputType = Omit<Post, "id">;
-const CreatePostInput =
-  builder.inputRef<CreatePostInputType>("CreatePostInput");
+const CreatePostInput = builder.inputRef<CreatePostInputType>("CreatePostInput");
 CreatePostInput.implement({
   fields: (t) => ({
     title: t.string({ required: true }),
@@ -34,10 +33,8 @@ builder.mutationField("createPost", (t) =>
   })
 );
 
-type UpdatePostInputType = Required<Pick<Post, "id">> &
-  Partial<Omit<Post, "id">>; // TODO: Make this cleaner
-const UpdatePostInput =
-  builder.inputRef<UpdatePostInputType>("UpdatePostInput");
+type UpdatePostInputType = Required<Pick<Post, "id">> & Partial<Omit<Post, "id">>; // TODO: Make this cleaner
+const UpdatePostInput = builder.inputRef<UpdatePostInputType>("UpdatePostInput");
 UpdatePostInput.implement({
   fields: (t) => ({
     id: t.id({ required: true }),
@@ -65,10 +62,7 @@ builder.mutationField("updatePost", (t) =>
       input: t.arg({ type: UpdatePostInput, required: true }),
     },
     resolve: async (query, parent, args, context, info) => {
-      const input = removeNullFieldsThatAreNonNullable<Post>(
-        { ...args.input },
-        PostNullability
-      );
+      const input = removeNullFieldsThatAreNonNullable<Post>({ ...args.input }, PostNullability);
       input.id = undefined;
 
       const result = await db
