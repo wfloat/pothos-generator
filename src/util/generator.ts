@@ -31,15 +31,23 @@ function generateObjectField(field: Field) {
   return `${name}: t.${exposeType}("${name}"${nullableString}),`;
 }
 
-function createObjectRelation(relation: Relation) {
+function createObjectRelation(relation: Relation, model: Model) {
   let name = relation.name;
   let referenceField = relation.referenceField;
   let relatedModel = relation.relatedModel;
   let relatedModelCamel = _.camelCase(relatedModel);
+
+  let loaderCode;
+  if (relation.oneToOne) {
+    loaderCode = `context.loaders.${name}From${model.name}.load(root.id)`;
+  } else {
+    loaderCode = `context.loaders.${relatedModelCamel}.load(root.${referenceField})`;
+  }
+
   return `${name}: t.relation("${name}", {
   ${relation.required ? "" : "nullable: true,"}
   resolve: async (query, root, args, context, info) =>
-  await context.loaders.${relatedModelCamel}.load(root.${referenceField}),
+  await ${loaderCode},
 }),`;
 }
 
@@ -68,8 +76,8 @@ function createObjectRelatedConnection(
     cursor: "id",
     resolve: (query, parent, args, context, info) => undefined,
   },
-  { name: "${generateRandomString(4)}${namePascal}Connection" },
-  { name: "${generateRandomString(4)}${namePascal}Edge" }
+  { name: "${modelName}${namePascal}Connection" },
+  { name: "${modelName}${namePascal}Edge" }
 ),`;
 }
 
@@ -108,7 +116,7 @@ builder.prismaObject("${name}", {
     // Fields
 ${fields.map((field) => generateObjectField(field)).join("\n")}
     // Relations
-${relations.map((relation) => createObjectRelation(relation)).join("\n")}
+${relations.map((relation) => createObjectRelation(relation, model)).join("\n")}
     // Connections
 ${relatedConnections
   .map((connection) => createObjectRelatedConnection(connection, name))
@@ -172,32 +180,47 @@ ${name}s: t.prismaConnection(
 function generateModelMutations(model: Model) {
   let name = model.name;
   let nameKebab = _.kebabCase(model.name);
+  let nameCamel = _.camelCase(model.name);
 
   return `import { builder } from "../../builder.js";
+import { db } from "../../database.js";
+import { removeNullFields } from "../../helpers.js";
 import { Create${name}Input, Update${name}Input } from "./${nameKebab}.js";
-// import { create${name}, update${name} } from "./${nameKebab}.resolver.js";
 
 builder.mutationField("create${name}", (t) =>
 t.prismaField({
     type: "${name}",
-    nullable: true,
+    nullable: false,
     args: {
     input: t.arg({ type: Create${name}Input, required: true }),
     },
-    resolve: (root, args, context, info) => undefined,
-    // create${name}(args.input),
+    resolve: async (query, parent, args, context, info) => {
+      const result = await db
+        .insertInto("${name}")
+        .values(args.input)
+        .returning(["id"])
+        .executeTakeFirstOrThrow();
+      return context.loaders.${nameCamel}.load(result.id);
+    },
 })
 );
 
 builder.mutationField("update${name}", (t) =>
 t.prismaField({
     type: "${name}",
-    nullable: true,
+    nullable: false,
     args: {
     input: t.arg({ type: Update${name}Input, required: true }),
     },
-    resolve: (root, args, context, info) => undefined,
-    // update${name}(args.input),
+    resolve: async (query, parent, args, context, info) => {
+      const input = removeNullFields(args.input);
+      const result = await db
+        .updateTable("${name}")
+        .set(input)
+        .where("id", "=", args.input.id)
+        .executeTakeFirst();
+      return context.loaders.${nameCamel}.load(args.input.id);
+    },
 })
 );
 `;

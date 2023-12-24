@@ -22,28 +22,36 @@ generator kysely {
 model Account {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   firstName     String
-  lastName      String
+  lastName      String?
   modifiedPosts Post[]    @relation("1")
   posts         Post[]    @relation("0")
   comments      Comment[]
 }
 
 model Post {
-  id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  title        String
-  content      String
-  author       Account   @relation(fields: [authorId], references: [id], name: "0")
-  comments     Comment[]
-  authorId     String    @db.Uuid
-  modifiedBy   Account?  @relation(fields: [modifiedById], references: [id], name: "1")
-  modifiedById String?   @db.Uuid
+  id       String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title    String
+  content  String
+  author   Account   @relation(fields: [authorId], references: [id], name: "0")
+  comments Comment[]
+  authorId String    @db.Uuid
+  editor   Account?  @relation(fields: [editorId], references: [id], name: "1")
+  editorId String?   @db.Uuid
 }
 
 model Comment {
-  id       String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   comment  String
-  author   Account @relation(fields: [authorId], references: [id])
-  post     Post    @relation(fields: [postId], references: [id])
-  authorId String  @db.Uuid
-  postId   String  @db.Uuid
+  author   Account  @relation(fields: [authorId], references: [id])
+  post     Post     @relation(fields: [postId], references: [id])
+  authorId String   @db.Uuid
+  postId   String   @db.Uuid
+  quality  Quality? // ctx.loaders.qualityFromComment.load(id) use field name not model name at front
+}
+
+model Quality {
+  id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  score     Int
+  commentId String  @unique @db.Uuid
+  comment   Comment @relation(fields: [commentId], references: [id]) // ctx.loaders.comment.load(commentId)
 }

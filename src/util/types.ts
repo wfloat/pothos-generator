@@ -10,6 +10,7 @@ export type Relation = {
   relatedModel: string;
   referenceField: string;
   required: boolean;
+  oneToOne?: boolean;
 };
 
 export type RelatedConnection = {

@@ -53,13 +53,23 @@ function relationAstToRelation(field: FieldAst): Relation {
   let relationAttribute = field.attributes?.find(
     (attribute) => attribute.name === "relation"
   ) as any;
-  let referenceField = relationAttribute.args[0].value.value.args[0] as string;
+
+  let referenceField;
+  let oneToOne = false;
+  if (relationAttribute) {
+    referenceField = relationAttribute.args[0].value.value.args[0] as string;
+  } else {
+    // Mark as a 1to1 relation to be processed when the entire Schema object is back in scope
+    referenceField = "";
+    oneToOne = true;
+  }
 
   return {
     name: field.name,
     relatedModel: field.fieldType as string,
     referenceField,
     required: !field.optional,
+    oneToOne,
   };
 }
 
@@ -103,6 +113,27 @@ function modelAstToModel(model: ModelAst): Model {
   };
 }
 
+function processOneToOneRelations(schema: Schema) {
+  schema.models.forEach((model) => {
+    model.relations.forEach((relation) => {
+      if (relation.oneToOne) {
+        let relatedModel = schema.models.find(
+          (x) => x.name === relation.relatedModel
+        );
+        if (relatedModel) {
+          let parentRelation = relatedModel.relations.find(
+            (x) => x.relatedModel === model.name
+          );
+          if (parentRelation) {
+            relation.referenceField = parentRelation.referenceField;
+          }
+        }
+      }
+    });
+  });
+  return schema;
+}
+
 export function parsePrismaSchema(schemaPath: string): Schema {
   let schemaString = fs.readFileSync(schemaPath, "utf-8");
   let schemaAst = getSchema(schemaString);
@@ -114,5 +145,7 @@ export function parsePrismaSchema(schemaPath: string): Schema {
   let schema: Schema = {
     models: modelsAst.map((x) => modelAstToModel(x)),
   };
+  processOneToOneRelations(schema);
+
   return schema;
 }
