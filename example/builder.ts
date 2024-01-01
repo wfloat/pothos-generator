@@ -16,6 +16,10 @@ export const builder = new SchemaBuilder<{
       Output: string;
       Input: string;
     };
+    Date: {
+      Input: Date;
+      Output: Date;
+    };
   };
 }>({
   plugins: [PrismaPlugin, RelayPlugin],

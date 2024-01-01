@@ -16,6 +16,15 @@ export function createLoaders() {
         .execute()
         .then((rows) => ids.map((id: any) => rows.find((x) => x.id === id)))
     ),
+    // accounts: new DataLoader((ids: any) =>
+    //   db
+    //     .selectFrom("Account")
+    //     .selectAll()
+    //     .where("id", ">", ids[0])
+    //     .limit(5)
+    //     .execute()
+    //     .then((rows) => ids.map((id: any) => rows.find((x) => x.id === id)))
+    // ),
     post: new DataLoader((ids: any) =>
       db
         .selectFrom("Post")

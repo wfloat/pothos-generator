@@ -16,6 +16,15 @@
       "skipFiles": ["<node_internals>/**"],
       "program": "${workspaceFolder}/dist/example/server.js",
       "outFiles": ["${workspaceFolder}/dist/**/*.js"]
-    }
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Generate wfloat API",
+      "skipFiles": ["<node_internals>/**"],
+      "program": "${workspaceFolder}/dist/src/index.js",
+      "outFiles": ["${workspaceFolder}/dist/**/*.js"],
+      "args": ["-s", "../../api/prisma/schema.prisma", "-o", "../../api/src/schema/"]
+    },
   ]
 }
