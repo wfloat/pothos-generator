@@ -19,6 +19,7 @@ generator kysely {
   fileName = "kysely.d.ts"
 }
 
+// import "rules/Account.ts"
 model Account {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   firstName     String
@@ -26,6 +27,7 @@ model Account {
   modifiedPosts Post[]    @relation("1")
   posts         Post[]    @relation("0")
   comments      Comment[]
+  dashboard     Dashboard @relation(fields: [id], references: [id])
 }
 
 model Post {
@@ -40,13 +42,14 @@ model Post {
 }
 
 model Comment {
-  id       String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  comment  String
-  author   Account  @relation(fields: [authorId], references: [id])
-  post     Post     @relation(fields: [postId], references: [id])
-  authorId String   @db.Uuid
-  postId   String   @db.Uuid
-  quality  Quality? // ctx.loaders.qualityFromComment.load(id) use field name not model name at front
+  id          String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  comment     String
+  author      Account    @relation(fields: [authorId], references: [id])
+  post        Post       @relation(fields: [postId], references: [id])
+  authorId    String     @db.Uuid
+  postId      String     @db.Uuid
+  quality     Quality? // ctx.loaders.qualityFromComment.load(id) use field name not model name at front
+  Dashboard   Dashboard? // @relation(fields: [id], references: [id]) @ignore
 }
 
 model Quality {
@@ -54,4 +57,13 @@ model Quality {
   score     Int
   commentId String  @unique @db.Uuid
   comment   Comment @relation(fields: [commentId], references: [id]) // ctx.loaders.comment.load(commentId)
+}
+
+model Dashboard {
+  id       String    @id @unique @db.Uuid
+  foo      String
+  bar      String
+  comments Comment[] @ignore
+  account  Account? // @virtual
+  // @virtual
 }
